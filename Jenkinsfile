@@ -1,35 +1,26 @@
 pipeline {
     agent any
+    
     tools {
         maven 'M2_HOME'
     }
+
     stages {
-        stage('SCM checkout') {
+        stage('git-checkout') {
             steps {
-                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/sudhakarbastawade2303/spring-boot-war-example.git']])
+                 checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Ravi5515/Jenkinspractice.git']])
             }
         }
-	stage('Sonar stage') {
+        stage('building-source-code') {
             steps {
-                echo "running sonar scan"
-		}
-        }
-        stage('build') {
-            steps {
-                sh 'mvn clean install'
+                sh 'mvn clean package'
             }
         }
-        stage('deploy') {
+        stage('deploy-to-tomcat') {
             steps {
-               deploy adapters: [tomcat9(credentialsId: 'tomcat9', path: '', url: 'http://65.1.1.251:8080')], contextPath: '/app', war: '**/*.war'
+                deploy adapters: [tomcat9(credentialsId: 'tomcat9', path: '', url: 'http://54.176.103.96:8080')], contextPath: '/app', war: '**/*.war'
             }
-        }    
+        }
+        
     }
-	post {
-          success {
-             mail to: devops.classes.online@gmail.com, subject: ‘The Pipeline success :(‘
-    }
-  }
 }
-
-
