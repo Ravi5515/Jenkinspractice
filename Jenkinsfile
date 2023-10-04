@@ -11,6 +11,20 @@ pipeline {
                  checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Ravi5515/Jenkinspractice.git']])
             }
         }
+        stage('Run-tests'){
+            parallel{
+                stage('Sonar-scan'){
+                    steps{
+                        echo "sonar scan done"
+                    }   
+                }
+                stage('unit-test'){
+                    steps{
+                        echo 'running unit test'
+                    }   
+                }
+            }
+        }
         stage('building-source-code') {
             steps {
                 sh 'mvn clean package'
